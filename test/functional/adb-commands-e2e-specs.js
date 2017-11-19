@@ -151,6 +151,10 @@ describe('adb commands', function () {
     await adb.setAnimationState(true);
     (await adb.isAnimationOn()).should.be.true;
   });
+  it('should be able to set device locale via setting app @skip-ci', async () => {
+    await adb.setDeviceSysLocaleViaSettingApp('en', 'us');
+    (await adb.getDeviceSysLocale().should.equal('en-US'));
+  });
   describe('app permissions', async () => {
     before(async function () {
       let deviceApiLevel = await adb.getApiLevel();
