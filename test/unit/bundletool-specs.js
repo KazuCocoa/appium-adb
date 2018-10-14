@@ -21,10 +21,13 @@ describe('bundletool', withMocks({teen_process, helpers, adb}, function (mocks) 
     it('can get version', async function () {
       mocks.teen_process.expects('exec')
         .once().withExactArgs(javaDummyPath, ['-jar', path.resolve(helperJarPath, 'bundletool.jar'), 'version'])
-        .returns('BundleTool 0.6.0');
+        .returns({stdout: 'BundleTool 0.6.0'});
       mocks.helpers.expects('getJavaForOs')
         .returns(javaDummyPath);
-      (await adb.version()).should.eq('BundleTool 0.6.0');
+      const v = await adb.version();
+      v.major.should.eq(0);
+      v.minor.should.eq(6);
+      v.build.should.eq(0);
     });
 
     it('can not get version with raising an error', async function () {
@@ -82,8 +85,7 @@ describe('bundletool', withMocks({teen_process, helpers, adb}, function (mocks) 
         .returns('');
       mocks.helpers.expects('getJavaForOs')
         .returns(javaDummyPath);
-      const result = await adb.buildApks('path/to/apks.apks', 'dummySerialNumber', `path/to/output`);
-      result.should.eq('path/to/output');
+      await adb.buildApks('path/to/apks.apks', 'dummySerialNumber', `path/to/output`);
     });
 
     it('build apks with keystore without pass', async function () {
